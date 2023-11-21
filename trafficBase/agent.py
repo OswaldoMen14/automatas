@@ -39,7 +39,7 @@ class Car(Agent):
         """ 
         Determines the new direction it will take, and then moves
         """
-        self.move() 
+        pass
 
 class Traffic_Light(Agent):
     """

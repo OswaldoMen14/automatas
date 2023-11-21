@@ -50,7 +50,30 @@ class CityModel(Model):
 
         self.num_agents = N
         self.running = True
+        self.step_count = 0
 
     def step(self):
         '''Advance the model by one step.'''
         self.schedule.step()
+        self.step_count += 1
+
+        if self.step_count == 1 or self.step_count % 10 == 0:
+            car1 = Car(f"car_{self.step_count}_1", self)
+            self.grid.place_agent(car1, (0, self.height - 1))
+            self.schedule.add(car1)
+            print("new car added to the grid")
+
+            car2 = Car(f"car_{self.step_count}_2", self)
+            self.grid.place_agent(car2, (self.width - 1, self.height - 1))
+            self.schedule.add(car2)
+            print("new car added to the grid")
+
+            car3 = Car(f"car_{self.step_count}_3", self)
+            self.grid.place_agent(car3, (0, 0))
+            self.schedule.add(car3)
+            print("new car added to the grid")
+
+            car4 = Car(f"car_{self.step_count}_4", self)
+            self.grid.place_agent(car4, (self.width - 1, 0))
+            self.schedule.add(car4)
+            print("new car added to the grid")
