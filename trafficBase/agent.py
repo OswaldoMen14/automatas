@@ -1,5 +1,7 @@
 from mesa import Agent
 
+
+
 class Car(Agent):
     """
     Agent that moves randomly.
@@ -14,13 +16,24 @@ class Car(Agent):
             unique_id: The agent's ID
             model: Model reference for the agent
         """
+        direction = None
         super().__init__(unique_id, model)
+
 
     def move(self):
         """ 
         Determines if the agent can move in the direction that was chosen
-        """        
-        self.model.grid.move_to_empty(self)
+        """       
+        possible_roads = self.model.grid.iter_neighbors(self.pos, moore=True, include_center=False)
+
+        roads = [road for road in possible_roads if isinstance(road, Road)]
+
+        traffic_lights = [traffic_light for traffic_light in possible_roads if isinstance(traffic_light, Traffic_Light)]
+
+        if roads:
+            traffic
+
+        
 
     def step(self):
         """ 
