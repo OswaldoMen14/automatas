@@ -114,25 +114,50 @@ class Car(Agent):
             return a_star_search(self.model.grid, self.spawn, self.destination, pathclear) # Find the path
         print("No destination set for Car, no path to find")  # in case the destination is not reachable or not able to be set
         return None # If the destination is not set, return None
-
+    
 
     def move(self):
         """ 
         Determines if the agent can move in the direction that was chosen
         """        
-        if self.path and self.pos in self.path: # If the path is set and the current position is in the path,
-            next_pos = self.path.get(self.pos) # Get the next position
-            #print(f"Current Position: {self.pos}, Next Position: {next_pos}, Path: {self.path}")
-            if next_pos is not None: # If the next position is not None,
-                self.model.grid.move_agent(self, next_pos) # Move the agent to the next position
-                self.direction = self.get_direction(self.pos, next_pos) # Get the direction the agent should face
-                if next_pos == self.destination: # If the destination is reached,
-                    self.model.grid.move_agent(self, next_pos)
-                    print(f"Car {self.unique_id} reached destination {self.destination}") 
-                    self.model.grid.remove_agent(self)
-                    self.model.schedule.remove(self)
-            else: # If the next position is None,
-                print("No valid next position found.") 
+        if self.path and self.pos in self.path:
+            next_pos = self.path.get(self.pos)
+
+            if next_pos is not None:
+                # Check if the next position is occupied
+                cell_contents = self.model.grid.get_cell_list_contents([next_pos])
+                
+                if not any(isinstance(agent, Car) for agent in cell_contents):
+                    # If the next position is not occupied by another car
+                    # Check if the next position is a traffic light
+                    traffic_lights = [agent for agent in cell_contents if isinstance(agent, Traffic_Light)]
+
+                    if traffic_lights:
+                        traffic_light = traffic_lights[0]
+                        if traffic_light.state:  # Assumes traffic_light.state is a boolean
+                            # Move only if the traffic light is green
+                            self.model.grid.move_agent(self, next_pos)
+                            self.direction = self.get_direction(self.pos, next_pos)
+                            if next_pos == self.destination:
+                                print(f"Car {self.unique_id} reached destination {self.destination}")
+                                self.model.grid.remove_agent(self)
+                                self.model.schedule.remove(self)
+                        else:
+                            # If the traffic light is red, the car should wait
+                            print(f"Car {self.unique_id} waiting at red traffic light")
+                    else:
+                        # If there is no traffic light, move freely
+                        self.model.grid.move_agent(self, next_pos)
+                        self.direction = self.get_direction(self.pos, next_pos)
+                        if next_pos == self.destination:
+                            print(f"Car {self.unique_id} reached destination {self.destination}")
+                            self.model.grid.remove_agent(self)
+                            self.model.schedule.remove(self)
+                else:
+                    # If the next position is occupied, the car should wait
+                    print(f"Car {self.unique_id} waiting for clear path")
+            else:
+                print("No valid next position found.")
         
     def get_direction(self, current_pos, next_pos):
         """
