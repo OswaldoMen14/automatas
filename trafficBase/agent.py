@@ -127,6 +127,7 @@ class Car(Agent):
                 self.model.grid.move_agent(self, next_pos) # Move the agent to the next position
                 self.direction = self.get_direction(self.pos, next_pos) # Get the direction the agent should face
                 if next_pos == self.destination: # If the destination is reached,
+                    self.model.grid.move_agent(self, next_pos)
                     print(f"Car {self.unique_id} reached destination {self.destination}") 
                     self.model.grid.remove_agent(self)
                     self.model.schedule.remove(self)

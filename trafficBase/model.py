@@ -56,12 +56,6 @@ class CityModel(Model):
         self.running = True
         self.step_count = 0
 
-        def remove_car(self, agent):
-            """
-            Remove a car from the model.
-            """
-            self.schedule.remove(agent) # Remove the agent from the scheduler
-            self.grid.remove_agent(agent) # Remove the agent from the grid
 
     def step(self):
         '''Advance the model by one step.'''
