@@ -31,7 +31,28 @@ public class AgentData
         this.y = y;
         this.z = z;
     }
+
 }
+
+public class TrafficLightData
+{
+
+    public string id;
+    public bool state;
+    public float x, y, z;
+
+
+    public TrafficLightData(string id, float x, float y, float z, bool state, string type)
+    {
+        this.id = id;
+        this.state = state;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+}
+
+
 
 [Serializable]
 
@@ -47,6 +68,15 @@ public class AgentsData
 
     public AgentsData() => this.positions = new List<AgentData>();
 }
+
+public class TrafficLightsData
+{
+    public List<TrafficLightData> trafficLights;
+
+    public TrafficLightsData() => this.trafficLights = new List<TrafficLightData>();
+}
+
+
 
 public class AgentController : MonoBehaviour
 {
@@ -78,32 +108,33 @@ public class AgentController : MonoBehaviour
     */
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
-    string getObstaclesEndpoint = "/getObstacles";
+    string getTrafficLightEndpoint = "/getTrafficLights";
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
-    AgentsData agentsData, obstacleData;
+    AgentsData agentsData;
+    TrafficLightsData trafficLightsData;
     Dictionary<string, GameObject> agents;
     Dictionary<string, Vector3> prevPositions, currPositions;
 
     bool updated = false, started = false;
 
-    public GameObject agentPrefab, obstaclePrefab, floor;
-    public int NAgents, width, height;
+    public GameObject agentPrefab;
     public float timeToUpdate = 5.0f;
-    private float timer, dt;
+    private float timer, dt; 
+    [SerializeField] int tileSize;
 
     void Start()
     {
         agentsData = new AgentsData();
-        obstacleData = new AgentsData();
+        trafficLightsData = new TrafficLightsData();
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
         agents = new Dictionary<string, GameObject>();
 
-        floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
-        floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
+       // floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
+        // floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
         
         timer = timeToUpdate;
 
@@ -148,12 +179,15 @@ public class AgentController : MonoBehaviour
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + updateEndpoint);
         yield return www.SendWebRequest();
+
+
  
         if (www.result != UnityWebRequest.Result.Success)
             Debug.Log(www.error);
         else 
         {
             StartCoroutine(GetAgentsData());
+            StartCoroutine(GetTrafficLight());
         }
     }
 
@@ -166,9 +200,9 @@ public class AgentController : MonoBehaviour
         */
         WWWForm form = new WWWForm();
 
-        form.AddField("NAgents", NAgents.ToString());
-        form.AddField("width", width.ToString());
-        form.AddField("height", height.ToString());
+        //form.AddField("NAgents", NAgents.ToString());
+        //form.AddField("width", width.ToString());
+        //form.AddField("height", height.ToString());
 
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -186,7 +220,7 @@ public class AgentController : MonoBehaviour
 
             // Once the configuration has been sent, it launches a coroutine to get the agents data.
             StartCoroutine(GetAgentsData());
-            StartCoroutine(GetObstacleData());
+            StartCoroutine(GetTrafficLight());
         }
     }
 
@@ -207,9 +241,9 @@ public class AgentController : MonoBehaviour
 
             foreach(AgentData agent in agentsData.positions)
             {
-                Vector3 newAgentPosition = new Vector3(agent.x, agent.y, agent.z);
+                Vector3 newAgentPosition = new Vector3(agent.x, agent.y, agent.z * tileSize);
 
-                    if(!started)
+                    if(!agents.ContainsKey(agent.id))
                     {
                         prevPositions[agent.id] = newAgentPosition;
                         agents[agent.id] = Instantiate(agentPrefab, newAgentPosition, Quaternion.identity);
@@ -224,27 +258,50 @@ public class AgentController : MonoBehaviour
             }
 
             updated = true;
-            if(!started) started = true;
         }
     }
 
-    IEnumerator GetObstacleData() 
+
+
+    IEnumerator GetTrafficLight()
     {
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
+        Debug.Log("Getting Traffic Lights");
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLightEndpoint);
         yield return www.SendWebRequest();
- 
+
         if (www.result != UnityWebRequest.Result.Success)
             Debug.Log(www.error);
-        else 
+        else
         {
-            obstacleData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
+            trafficLightsData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
 
-            Debug.Log(obstacleData.positions);
-
-            foreach(AgentData obstacle in obstacleData.positions)
+            foreach (TrafficLightData trafficLight in trafficLightsData.trafficLights)
             {
-                Instantiate(obstaclePrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
+                Vector3 newTrafficLightPosition = new Vector3(trafficLight.x, trafficLight.y, trafficLight.z * tileSize);
+
+                if (!agents.ContainsKey(trafficLight.id))
+                {   
+                    prevPositions[trafficLight.id] = newTrafficLightPosition;
+                    agents[trafficLight.id] = new GameObject("Traffic Light" + trafficLight.id);
+                    agents[trafficLight.id].AddComponent<Light>();
+
+                    if (trafficLight.state)
+                        agents[trafficLight.id].GetComponent<Light>().color = Color.green;
+                    else
+                        agents[trafficLight.id].GetComponent<Light>().color = Color.red;
+                }
+                else
+                {
+                    if(trafficLight.state)
+                        
+                        agents[trafficLight.id].GetComponent<Light>().color = Color.green;
+                    else
+                        agents[trafficLight.id].GetComponent<Light>().color = Color.red;
+                }
             }
+
+            updated = true;
         }
     }
 }
+
