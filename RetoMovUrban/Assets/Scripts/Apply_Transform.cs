@@ -12,11 +12,9 @@ public class Apply_Transform : MonoBehaviour
     [Header("Interpolation")]
     [SerializeField] Vector3 startPos;
     [SerializeField] Vector3 stopPos;
-    [SerializeField] float moveTime;
-
-
-    [SerializeField] Vector3 displacement;
-       
+    [SerializeField] float ti = 0f;
+    public float moveTime = 0f;
+    [SerializeField] float elapsedTime = 0f;
     [SerializeField] float speed;
     [SerializeField] GameObject llanta;
     [SerializeField] float angle;
@@ -60,11 +58,15 @@ public class Apply_Transform : MonoBehaviour
 
     void DoTransform()
     {
-    
+        ti = elapsedTime / moveTime;
+
+        Vector3 displacement = startPos + (stopPos - startPos) * ti;//desplazamiento del auto
+        elapsedTime += Time.deltaTime;
 
         Matrix4x4 move = HW_Transforms.TranslationMat(displacement.x * Time.time,
                                                       displacement.y * Time.time,
                                                       displacement.z * Time.time);
+        angle = GetAngle(displacement);//angulo de rotacion del auto
 
         Matrix4x4 rotate = HW_Transforms.RotateMat(angle, rotationAxis);//rotacion del auto dado al desplazamiento ingresado
 
@@ -115,18 +117,12 @@ public class Apply_Transform : MonoBehaviour
         }
     }
 
-    public void setNewPos(Vector3 newPos){
+    public void SetNewPos(Vector3 newPos){
         startPos = stopPos;
         stopPos = newPos;
+        elapsedTime = 0f;
 
     }
 
-    Vector3 PositionLerp(Vector3 star, Vector3 stop, float t){
-        return star + (stop - star) * t;
-    }
-
-    float GetT(){
-        return t*t;
-    }
 }
 

@@ -23,13 +23,16 @@ public class AgentData
     */
     public string id;
     public float x, y, z;
+    public string state;
 
-    public AgentData(string id, float x, float y, float z)
+    public AgentData(string id, float x, float y, float z, string state)
     {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.state = state;
+
     }
 
 }
@@ -247,6 +250,12 @@ public class AgentController : MonoBehaviour
                     {
                         prevPositions[agent.id] = newAgentPosition;
                         agents[agent.id] = Instantiate(agentPrefab, newAgentPosition, Quaternion.identity);
+                    }
+                    else if(agent.state == "dead"){
+                        Destroy(agents[agent.id]);
+                        agents.Remove(agent.id); 
+                        prevPositions.Remove(agent.id);
+                        currPositions.Remove(agent.id);
                     }
                     else
                     {

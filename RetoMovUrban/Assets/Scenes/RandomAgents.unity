@@ -339,8 +339,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 983bc179e80f15347a79dd7b044746e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentPrefab: {fileID: 5588966464074354437, guid: 39c3ec00b3e450b47a244e0ce31aa852, type: 3}
-  timeToUpdate: 5
+  agentPrefab: {fileID: 7782708928384237435, guid: 6b34f71a54e809b43a562f88ab0ae54a, type: 3}
+  timeToUpdate: 0.2
   tileSize: 1
 --- !u!4 &1518653506
 Transform:
@@ -351,7 +351,7 @@ Transform:
   m_GameObject: {fileID: 1518653504}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -28,7 +28,7 @@ def getAgents():
     global model
 
     if request.method == 'GET':
-        carPositions = [{"id": str(car.unique_id), "x": x, "y": 1, "z": z}
+        carPositions = [{"id": str(car.unique_id), "x": x, "y": 1, "z": z, "state": car.state}
                         for x in range(model.grid.width)
                         for z in range(model.grid.height)
                         for car in model.grid.get_cell_list_contents([(x, z)]) if isinstance(car, Car)]

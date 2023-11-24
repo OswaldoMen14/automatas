@@ -64,6 +64,7 @@ class Car(Agent):
         self.destination = destination
         self.spawn = spawn
         self.path = None
+        self.state = "life"
     
     def initialize_path(self):
         """
@@ -140,8 +141,8 @@ class Car(Agent):
                             self.direction = self.get_direction(self.pos, next_pos)
                             if next_pos == self.destination:
                                 print(f"Car {self.unique_id} reached destination {self.destination}")
-                                self.model.grid.remove_agent(self)
-                                self.model.schedule.remove(self)
+                                self.model.grid.move_agent(self, next_pos)
+                                self.state = "death"
                         else:
                             # If the traffic light is red, the car should wait
                             print(f"Car {self.unique_id} waiting at red traffic light")
@@ -151,8 +152,9 @@ class Car(Agent):
                         self.direction = self.get_direction(self.pos, next_pos)
                         if next_pos == self.destination:
                             print(f"Car {self.unique_id} reached destination {self.destination}")
-                            self.model.grid.remove_agent(self)
-                            self.model.schedule.remove(self)
+                            self.model.grid.move_agent(self, next_pos)
+                            self.state = "death"
+                            
                 else:
                     # If the next position is occupied, the car should wait
                     print(f"Car {self.unique_id} waiting for clear path")
@@ -180,7 +182,11 @@ class Car(Agent):
         """ 
         Determines the new direction it will take, and then moves
         """
-        self.move()
+        if self.state == "life":
+            self.move()
+        elif self.state == "death":
+            self.model.grid.remove_agent(self)
+            self.model.schedule.remove(self)
 
 class Traffic_Light(Agent):
     """
