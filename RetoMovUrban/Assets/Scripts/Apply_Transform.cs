@@ -18,7 +18,7 @@ public class Apply_Transform : MonoBehaviour
     [SerializeField] float speed;
     [SerializeField] GameObject llanta;
     [SerializeField] float angle;
-    AXIS rotationAxis;
+
 
     [SerializeField] Vector3[] llantasPos;
 
@@ -63,12 +63,13 @@ public class Apply_Transform : MonoBehaviour
         Vector3 displacement = startPos + (stopPos - startPos) * ti;//desplazamiento del auto
         elapsedTime += Time.deltaTime;
 
-        Matrix4x4 move = HW_Transforms.TranslationMat(displacement.x * Time.time,
-                                                      displacement.y * Time.time,
-                                                      displacement.z * Time.time);
-        angle = GetAngle(displacement);//angulo de rotacion del auto
+        Matrix4x4 move = HW_Transforms.TranslationMat(displacement.x ,
+                                                      displacement.y ,
+                                                      displacement.z );
 
-        Matrix4x4 rotate = HW_Transforms.RotateMat(angle, rotationAxis);//rotacion del auto dado al desplazamiento ingresado
+        
+
+        Matrix4x4 rotate = HW_Transforms.RotateMat(angle, AXIS.Y);//rotacion del auto dado al desplazamiento ingresado
 
         Matrix4x4 composite = move * rotate;//matriz de transformacion del auto, primero rota y luego se mueve 
 
@@ -82,6 +83,9 @@ public class Apply_Transform : MonoBehaviour
 
         mesh.vertices = newVectices;//se actualizan los vertices del auto con los nuevos
         mesh.RecalculateNormals();//se recalculan las normales del auto
+        mesh.RecalculateBounds();
+
+
 
         for (int i = 0; i < llantaMeshes.Length; i++)
         {
@@ -97,6 +101,7 @@ public class Apply_Transform : MonoBehaviour
 
             llantaMeshes[i].vertices = llantasNewVertices[i];//se actualizan los vertices de las llantas con los nuevos
             llantaMeshes[i].RecalculateNormals();//se saca las normales de las llantas
+            llantaMeshes[i].RecalculateBounds();
         }
         
     }
@@ -120,6 +125,7 @@ public class Apply_Transform : MonoBehaviour
     public void SetNewPos(Vector3 newPos){
         startPos = stopPos;
         stopPos = newPos;
+        angle = GetAngle(stopPos-startPos);
         elapsedTime = 0f;
 
     }

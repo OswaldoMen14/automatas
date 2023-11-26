@@ -7,7 +7,7 @@ public class CityMaker : MonoBehaviour
     [SerializeField] TextAsset layout;
     [SerializeField] GameObject roadPrefab;
     [SerializeField] GameObject[] buildingPrefab;
-    [SerializeField] GameObject semaphorePrefab;
+    //[SerializeField] GameObject semaphorePrefab;
     [SerializeField] int tileSize;
 
     // Start is called before the first frame update
@@ -29,7 +29,7 @@ public class CityMaker : MonoBehaviour
         // To draw from the top, find the rows of the file
         // and move down
         // Remove the last enter, and one more to start at 0
-        int y = tiles.Split('\n').Length - 2;
+        int y = tiles.Split('\n').Length - 1;
         Debug.Log(y);
 
         Vector3 position;
@@ -50,15 +50,15 @@ public class CityMaker : MonoBehaviour
                 position = new Vector3(x * tileSize, 0, y * tileSize);
                 tile = Instantiate(roadPrefab, position, Quaternion.identity);
                 tile.transform.parent = transform;
-                tile = Instantiate(semaphorePrefab, position, Quaternion.identity);
-                tile.transform.parent = transform;
+                //tile = Instantiate(semaphorePrefab, position, Quaternion.identity);
+               // tile.transform.parent = transform;
                 x += 1;
             } else if (tiles[i] == 'S') {
                 position = new Vector3(x * tileSize, 0, y * tileSize);
                 tile = Instantiate(roadPrefab, position, Quaternion.Euler(0, 90, 0));
                 tile.transform.parent = transform;
-                tile = Instantiate(semaphorePrefab, position, Quaternion.Euler(0, 90, 0));
-                tile.transform.parent = transform;
+                //tile = Instantiate(semaphorePrefab, position, Quaternion.Euler(0, 90, 0));
+                //tile.transform.parent = transform;
                 x += 1;
             } else if (tiles[i] == 'D') {
                 position = new Vector3(x * tileSize, 0, y * tileSize);

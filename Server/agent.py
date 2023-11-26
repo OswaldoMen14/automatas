@@ -142,7 +142,7 @@ class Car(Agent):
                             if next_pos == self.destination:
                                 print(f"Car {self.unique_id} reached destination {self.destination}")
                                 self.model.grid.move_agent(self, next_pos)
-                                self.state = "death"
+                                self.state = "intermediate"
                         else:
                             # If the traffic light is red, the car should wait
                             print(f"Car {self.unique_id} waiting at red traffic light")
@@ -153,7 +153,7 @@ class Car(Agent):
                         if next_pos == self.destination:
                             print(f"Car {self.unique_id} reached destination {self.destination}")
                             self.model.grid.move_agent(self, next_pos)
-                            self.state = "death"
+                            self.state = "intermediate"
                             
                 else:
                     # If the next position is occupied, the car should wait
@@ -184,9 +184,13 @@ class Car(Agent):
         """
         if self.state == "life":
             self.move()
+        elif self.state == "intermediate":
+            self.state = "death"
+            pass
         elif self.state == "death":
             self.model.grid.remove_agent(self)
             self.model.schedule.remove(self)
+            
 
 class Traffic_Light(Agent):
     """
