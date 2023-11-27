@@ -49,10 +49,18 @@ def getTrafficLights():
         #
         print("trafficLightPositions")
         print(trafficLightPositions[0])
-        print(trafficLightPositions[0].id)
-        print(trafficLightPositions[0].x)
-        print(trafficLightPositions[0].y)
-        print(trafficLightPositions[0].z)
+
+        #Esto es lo que generaba el error 500
+        # print(trafficLightPositions[0].id)
+        # print(trafficLightPositions[0].x)
+        # print(trafficLightPositions[0].y)
+        # print(trafficLightPositions[0].z)
+
+        #esto es lo que modifiqué para que funcionara
+        print(trafficLightPositions[0]["id"])
+        print(trafficLightPositions[0]["x"])
+        print(trafficLightPositions[0]["y"])
+        print(trafficLightPositions[0]["z"])
         #hay que ver si nos da bien el tipo y el estado
 
         return jsonify({'positions':trafficLightPositions})
