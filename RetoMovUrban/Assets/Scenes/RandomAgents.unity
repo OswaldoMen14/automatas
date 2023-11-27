@@ -341,7 +341,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentPrefab: {fileID: 6019618798321258605, guid: 39c3ec00b3e450b47a244e0ce31aa852, type: 3}
   trafficLightPrefab: {fileID: 8609347376451747554, guid: 5adbef618d868004b989063d53dd0499, type: 3}
-  timeToUpdate: 5
+  timeToUpdate: 1
   tileSize: 1
 --- !u!4 &1518653506
 Transform:
