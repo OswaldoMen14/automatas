@@ -43,17 +43,17 @@ public class TrafficLightData
 
     public string id;
     public float x, y, z;
-    public bool state;
+    public bool light;
     public string type;
 
 
-    public TrafficLightData(string id, float x, float y, float z, bool state, string type)
+    public TrafficLightData(string id, float x, float y, float z, bool light, string type)
     {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
-        this.state = state;
+        this.light = light;
         this.type = type;
     }
 }
@@ -310,14 +310,14 @@ public class AgentController : MonoBehaviour
                        
 
 
-                    if (trafficLight.state)
+                    if (trafficLight.light)
                         agents[trafficLight.id].GetComponent<Light>().color = Color.green;
                     else
                         agents[trafficLight.id].GetComponent<Light>().color = Color.red;
                 }
                 else
                 {
-                    if(trafficLight.state)
+                    if(trafficLight.light)
                         
                         agents[trafficLight.id].GetComponent<Light>().color = Color.green;
                     else
