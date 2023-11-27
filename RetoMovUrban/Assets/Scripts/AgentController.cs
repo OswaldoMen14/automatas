@@ -37,6 +37,7 @@ public class AgentData
 
 }
 
+[Serializable]
 public class TrafficLightData
 {
 
@@ -60,7 +61,6 @@ public class TrafficLightData
 
 
 [Serializable]
-
 public class AgentsData
 {
     /*
@@ -74,7 +74,7 @@ public class AgentsData
     public AgentsData() => this.positions = new List<AgentData>();
 }
 
-
+[Serializable]
 public class TrafficLightsData
 {
     public List<TrafficLightData> positions;
