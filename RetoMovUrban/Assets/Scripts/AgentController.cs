@@ -300,11 +300,23 @@ public class AgentController : MonoBehaviour
                         Debug.Log("Semaphore " + trafficLight.id + " created");
                     }
                         
-                    else
+                    else if(trafficLight.type == "S")
                     {
                         prevPositions[trafficLight.id] = newTrafficLightPosition;
                         agents[trafficLight.id] = Instantiate(trafficLightPrefab, newTrafficLightPosition, Quaternion.Euler(0, 90, 0));
                         Debug.Log("Semaphore " + trafficLight.id + " created");
+                    }
+                    else if(trafficLight.type == "X")
+                    {
+                        prevPositions[trafficLight.id] = newTrafficLightPosition;
+                        agents[trafficLight.id] = Instantiate(trafficLightPrefab, newTrafficLightPosition, Quaternion.Euler(0, -90, 0));
+                        Debug.Log("Semaphore " + trafficLight.id + " created");
+                    }
+                    else
+                    {
+                        prevPositions[trafficLight.id] = newTrafficLightPosition;
+                        agents[trafficLight.id] = Instantiate(trafficLightPrefab, newTrafficLightPosition, Quaternion.Euler(0, 180, 0));
+                        Debug.Log("Semaphore " + trafficLight.id + " created"+ "with type" + trafficLight.type);
                     }
                         
                        

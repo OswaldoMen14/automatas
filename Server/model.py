@@ -37,9 +37,13 @@ class CityModel(Model):
                         agent = Road(f"r_{r*self.width+c}", self, dataDictionary[col])
                         self.grid.place_agent(agent, (c, self.height - r - 1))
 
-                    elif col in ["S", "s"]:
+                    elif col in ["S","s","X","x"]:
                         if col == "S":
                             agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]),"S")
+                        elif col == "X":
+                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]),"X")
+                        elif col == "x":
+                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]),"x")
                         else:
                             agent = Traffic_Light(f"tl_{r*self.width+c}", self, True, int(dataDictionary[col]),"s")
                         self.grid.place_agent(agent, (c, self.height - r - 1))
