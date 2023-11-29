@@ -15,12 +15,18 @@ public class Apply_Transform : MonoBehaviour
     [SerializeField] float ti = 0f;
     public float moveTime = 0f;
     [SerializeField] float elapsedTime = 0f;
-    [SerializeField] float speed;
+    
+    [Header("Transform of wheels")]
+    [SerializeField] float speedRotation;
     [SerializeField] GameObject llanta;
     [SerializeField] float angle;
-
-
     [SerializeField] Vector3[] llantasPos;
+
+    Dictionary<string, GameObject> llantas = new Dictionary<string, GameObject>();
+
+    
+
+
 
     
     Mesh mesh;//mesh del auto
@@ -73,7 +79,7 @@ public class Apply_Transform : MonoBehaviour
 
         Matrix4x4 composite = move * rotate;//matriz de transformacion del auto, primero rota y luego se mueve 
 
-        Matrix4x4 rotateLlantas = HW_Transforms.RotateMat(Time.time * speed, AXIS.X);//rotacion de las llantas sobre el eje x
+        Matrix4x4 rotateLlantas = HW_Transforms.RotateMat(Time.time * speedRotation, AXIS.X);//rotacion de las llantas sobre el eje x
 
         for (int i = 0; i < newVectices.Length; i++)
         {
@@ -106,13 +112,22 @@ public class Apply_Transform : MonoBehaviour
         
     }
 
+    public void DestroyLlantas (){
+        for (int i = 0; i < llantasPos.Length; i++)
+        {
+            Destroy(llantas[i.ToString()]);
+        }
+    }
+
     void generateLlantas()
     {
         Vector3 posicion_original = new Vector3(0, 0, 0);//posicion de las llantas al inicio
         for (int i = 0; i < llantasPos.Length; i++)
         {
-            GameObject llantaTemp = Instantiate(llanta, posicion_original, Quaternion.identity);//se instancia la llanta
-            llantaMeshes[i] = llantaTemp.GetComponentInChildren<MeshFilter>().mesh;//se obtiene el mesh de la llanta
+            //de int a string
+
+            llantas[i.ToString()] = Instantiate(llanta, posicion_original, Quaternion.identity);//se instancia la llanta
+            llantaMeshes[i] = llantas[i.ToString()].GetComponentInChildren<MeshFilter>().mesh;//se obtiene el mesh de la llanta
             llantasVertices[i] = llantaMeshes[i].vertices;//se obtienen los vertices de la llanta
             llantasNewVertices[i] = new Vector3[llantasVertices[i].Length];
             for (int j = 0; j < llantasVertices[i].Length; j++)
@@ -125,7 +140,9 @@ public class Apply_Transform : MonoBehaviour
     public void SetNewPos(Vector3 newPos){
         startPos = stopPos;
         stopPos = newPos;
-        angle = GetAngle(stopPos-startPos);
+        if(startPos != stopPos){
+            angle = GetAngle(stopPos-startPos);  
+        }
         elapsedTime = 0f;
 
     }

@@ -82,7 +82,7 @@ MonoBehaviour:
   ti: 0
   moveTime: 0
   elapsedTime: 0
-  speed: 20
+  speedRotation: 20
   llanta: {fileID: 919132149155446097, guid: 7c038cbadba3cb54bbe2bd7ac6a46050, type: 3}
   angle: 0
   llantasPos:

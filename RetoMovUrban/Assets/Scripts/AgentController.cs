@@ -251,6 +251,9 @@ public class AgentController : MonoBehaviour
                     }
                     //si el agente esta en estado final, se destruye
                     else if(agent.state == "intermediate"){
+                        Debug.Log("llanta destruida del agente " + agent.id);
+                        Apply_Transform applyTransform = agents[agent.id].GetComponent<Apply_Transform>();
+                        applyTransform.DestroyLlantas();
                         Destroy(agents[agent.id]);
                         Debug.Log("Agent " + agent.id + " died");
                         agents.Remove(agent.id); 
