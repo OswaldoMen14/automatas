@@ -16,9 +16,11 @@ def initModel():
     global currentStep, model, number_agents, width, height
 
     if request.method == 'POST':
-        currentStep = 0
 
-        model = CityModel(5)
+        timegenerate = int(request.form.get('timegenerate'))
+        file = request.form.get('file')
+
+        model = CityModel(timegenerate, file)
 
         return jsonify({"message":"Default parameters recieved, model initiated."})
 
@@ -46,22 +48,6 @@ def getTrafficLights():
                         for z in range(model.grid.height)
                         for trafficLight in model.grid.get_cell_list_contents([(x, z)]) if isinstance(trafficLight, Traffic_Light)]
         
-        #
-        print("trafficLightPositions")
-        print(trafficLightPositions[0])
-
-        #Esto es lo que generaba el error 500
-        # print(trafficLightPositions[0].id)
-        # print(trafficLightPositions[0].x)
-        # print(trafficLightPositions[0].y)
-        # print(trafficLightPositions[0].z)
-
-        #esto es lo que modifiqué para que funcionara
-        print(trafficLightPositions[0]["id"])
-        print(trafficLightPositions[0]["x"])
-        print(trafficLightPositions[0]["y"])
-        print(trafficLightPositions[0]["z"])
-        #hay que ver si nos da bien el tipo y el estado
 
         return jsonify({'positions':trafficLightPositions})
 
@@ -74,6 +60,16 @@ def updateModel():
         model.step()
         currentStep += 1
         return jsonify({'message':f'Model updated to step {currentStep}.', 'currentStep':currentStep})
+
+@app.route('/data', methods=['GET'])
+def getData():
+    global model
+    if request.method == 'GET':
+        año = "2023"
+        grupo = "301"
+        equipo = "1"
+        autos = self.model.num_agentslives
+        return jsonify({'año':año, 'grupo':grupo, 'equipo':equipo, 'autos':autos})
 
 
 if __name__=='__main__':

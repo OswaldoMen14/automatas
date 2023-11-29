@@ -123,12 +123,16 @@ public class AgentController : MonoBehaviour
 
     Dictionary<string, Vector3> prevPositions, currPositions;
 
-    bool updated = false, started = false;
+    bool updated = false;
 
-    public GameObject agentPrefab, trafficLightPrefab;
+    public GameObject[] agentPrefab;
+    public GameObject trafficLightPrefab;
     public float timeToUpdate = 5.0f;
     private float timer, dt; 
     [SerializeField] int tileSize;
+    [SerializeField] int timegenerate;
+
+    [SerializeField] string file;
 
     void Start()
     {
@@ -196,6 +200,10 @@ public class AgentController : MonoBehaviour
         It uses a WWWForm to send the data to the server, and then it uses a UnityWebRequest to send the form.
         */
         WWWForm form = new WWWForm();
+        form.AddField("timegenerate", timegenerate);
+        form.AddField("file", file);
+
+
 
         //form.AddField("NAgents", NAgents.ToString());
         //form.AddField("width", width.ToString());
@@ -243,7 +251,7 @@ public class AgentController : MonoBehaviour
                     if(!agents.ContainsKey(agent.id))
                     {
                         prevPositions[agent.id] = newAgentPosition;
-                        agents[agent.id] = Instantiate(agentPrefab, new Vector3(0,0,0), Quaternion.identity);
+                        agents[agent.id] = Instantiate(agentPrefab[UnityEngine.Random.Range(0,agentPrefab.Length)], new Vector3(0,0,0), Quaternion.identity);
                         Apply_Transform applyTransform = agents[agent.id].GetComponent<Apply_Transform>();
                         applyTransform.SetNewPos(newAgentPosition);
                         applyTransform.SetNewPos(newAgentPosition);

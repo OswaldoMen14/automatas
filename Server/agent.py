@@ -11,7 +11,7 @@ def a_star_search(graph, start, goal, pathclear):
     """
     Finds the shortest path between two cells using A*.
     """
-    print(f"Starting A* search from {start} to {goal}")
+    #print(f"Starting A* search from {start} to {goal}")
     obstacles = [] # Priority queue
     heapq.heappush(obstacles, (0, start)) # Add start cell to queue
     wherefrom = {start: None} # Dictionary to keep track of where the path came from
@@ -44,7 +44,7 @@ def a_star_search(graph, start, goal, pathclear):
             print("No path found in A* search")
             return {}  # Return empty path if no path is found
 
-    print(f"Path found: {path}")
+    #print(f"Path found: {path}")
     return path # Return the path
 
 class Car(Agent):
@@ -94,7 +94,7 @@ class Car(Agent):
         Finds the path from spawn to destination.
         """
         if self.destination: # If the destination is set,
-            print(f"Finding path for Car {self.unique_id} from {self.spawn} to {self.destination}")
+            #print(f"Finding path for Car {self.unique_id} from {self.spawn} to {self.destination}")
             def pathclear(current, next): # Function to check if the path is clear
                 cell_contents = self.model.grid.get_cell_list_contents([next]) # Get the contents of the next cell
 
@@ -113,7 +113,7 @@ class Car(Agent):
                     return True  # If it's a traffic light or destination, movement is allowed
                 return False  # Cell without road, traffic light, or destination is not valid
             return a_star_search(self.model.grid, self.spawn, self.destination, pathclear) # Find the path
-        print("No destination set for Car, no path to find")  # in case the destination is not reachable or not able to be set
+        #print("No destination set for Car, no path to find")  # in case the destination is not reachable or not able to be set
         return None # If the destination is not set, return None
     
 
@@ -140,7 +140,7 @@ class Car(Agent):
                             self.model.grid.move_agent(self, next_pos)
                             self.direction = self.get_direction(self.pos, next_pos)
                             if next_pos == self.destination:
-                                print(f"Car {self.unique_id} reached destination {self.destination}")
+                                #print(f"Car {self.unique_id} reached destination {self.destination}")
                                 self.model.grid.move_agent(self, next_pos)
                                 self.state = "intermediate"
                         else:
@@ -151,7 +151,7 @@ class Car(Agent):
                         self.model.grid.move_agent(self, next_pos)
                         self.direction = self.get_direction(self.pos, next_pos)
                         if next_pos == self.destination:
-                            print(f"Car {self.unique_id} reached destination {self.destination}")
+                            #print(f"Car {self.unique_id} reached destination {self.destination}")
                             self.model.grid.move_agent(self, next_pos)
                             self.state = "intermediate"
                             
@@ -190,6 +190,7 @@ class Car(Agent):
         elif self.state == "death":
             self.model.grid.remove_agent(self)
             self.model.schedule.remove(self)
+            self.model.num_agentslives -= 1
             
 
 class Traffic_Light(Agent):
