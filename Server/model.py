@@ -72,8 +72,6 @@ class CityModel(Model):
         '''Advance the model by one step.'''
         self.schedule.step()
         self.step_count +=1
-        if self.step_count % 100 == 0:
-            print("autos con vida " + str(self.num_agentslives))
         position = [(0, self.height-1),(self.width - 1, self.height - 1),(0, 0),(self.width - 1, 0)]
         if self.step_count == 1 or self.step_count % self.N == 0:
             for i in range(4):

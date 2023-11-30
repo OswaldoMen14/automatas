@@ -62,7 +62,7 @@ def updateModel():
     if request.method == 'GET':
         model.step()
         currentStep += 1
-        
+        print("Step:", currentStep)
         if(currentStep % 100 == 0):
             data = {
                 "year": "2023",
@@ -70,6 +70,8 @@ def updateModel():
                 "name": "Equipo1",
                 "num_cars": model.carInDestination
             }
+
+            print("car in the destination: ", str(model.carInDestination ))
             headers = {'Content-type': 'application/json'}
 
             response = requests.post(urlEndpoint, data=json.dumps(data), headers=headers)
