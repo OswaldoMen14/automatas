@@ -54,7 +54,7 @@ def getTrafficLights():
         return jsonify({'positions':trafficLightPositions})
 
 
-urlEndpoint = 'http://52.1.3.19:8585/api/validate_attempt'
+urlEndpoint = 'http://52.1.3.19:8585/api/attempts'
 
 @app.route('/update', methods=['GET'])
 def updateModel():
@@ -63,9 +63,7 @@ def updateModel():
         model.step()
         currentStep += 1
         
-
-
-        if(self.currentStep % 100 == 0):
+        if(currentStep % 100 == 0):
             data = {
                 "year": "2023",
                 "classroom": "301",
