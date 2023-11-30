@@ -144,7 +144,6 @@ public class Apply_Transform : MonoBehaviour
             angle = GetAngle(stopPos-startPos);  
         }
         elapsedTime = 0f;
-
     }
 
 }

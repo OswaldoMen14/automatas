@@ -18,7 +18,7 @@ class CityModel(Model):
         dataDictionary = json.load(open("static/city_files/mapDictionary.json"))
 
         self.N = N
-        self.num_agentslives = 0
+        self.carInDestination = 0
 
         self.traffic_lights = []
 
@@ -65,8 +65,35 @@ class CityModel(Model):
 
         self.running = True
         self.step_count = 0
+        self.car_generateblock = 0
+        
 
+    def step(self):
+        '''Advance the model by one step.'''
+        self.schedule.step()
+        self.step_count +=1
+        if self.step_count % 100 == 0:
+            print("autos con vida " + str(self.num_agentslives))
+        position = [(0, self.height-1),(self.width - 1, self.height - 1),(0, 0),(self.width - 1, 0)]
+        if self.step_count == 1 or self.step_count % self.N == 0:
+            for i in range(4):
+                destination = random.choice(self.destination)
+                if not any(isinstance(agent, Car) for agent in self.grid.get_cell_list_contents([position[i]])):
+                    car = Car(f"car_{self.step_count}_{i}", self, position[i], destination)
+                    self.grid.place_agent(car, position[i])
+                    car.initialize_path()
+                    self.schedule.add(car)
+                    print("new car added to the grid")
+                    print("this car is going to: ", destination)
+                else:
+                    self.car_generateblock += 1
+            if self.car_generateblock == 4:
+                self.running = False
+            else:
+                self.car_generateblock = 0
+    
 
+"""
     def step(self):
         '''Advance the model by one step.'''
         self.schedule.step()
@@ -111,4 +138,5 @@ class CityModel(Model):
             self.schedule.add(car4)
             self.num_agentslives += 1
             print("new car added to the grid")
-            print("this car is going to: ", destination)
+            print("this car is going to: ", destination)"""
+

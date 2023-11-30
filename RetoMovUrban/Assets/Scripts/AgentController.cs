@@ -257,9 +257,9 @@ public class AgentController : MonoBehaviour
                         applyTransform.SetNewPos(newAgentPosition);
                         applyTransform.moveTime = timeToUpdate;
                     }
-                    //si el agente esta en estado final, se destruye
+                    //if the agent is in the intermediate state, it is destroyed
                     else if(agent.state == "intermediate"){
-                        Debug.Log("llanta destruida del agente " + agent.id);
+                        Debug.Log("wheels destroyed of the car " + agent.id);
                         Apply_Transform applyTransform = agents[agent.id].GetComponent<Apply_Transform>();
                         applyTransform.DestroyLlantas();
                         Destroy(agents[agent.id]);
@@ -292,14 +292,13 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else
         {
-            //ver porque no se genera bien el gameobject
+            
             trafficLightsData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
 
             foreach (TrafficLightData trafficLight in trafficLightsData.positions)
             {
 
                 Vector3 newTrafficLightPosition = new Vector3(trafficLight.x, trafficLight.y, trafficLight.z * tileSize);
-                //
 
                 if (!agents.ContainsKey(trafficLight.id))
                 {   
@@ -329,9 +328,6 @@ public class AgentController : MonoBehaviour
                         agents[trafficLight.id] = Instantiate(trafficLightPrefab, newTrafficLightPosition, Quaternion.Euler(0, 180, 0));
                         Debug.Log("Semaphore " + trafficLight.id + " created"+ "with type" + trafficLight.type);
                     }
-                        
-                       
-
 
                     if (trafficLight.light)
                         agents[trafficLight.id].GetComponent<Light>().color = Color.green;

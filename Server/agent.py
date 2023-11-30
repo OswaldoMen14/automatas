@@ -188,9 +188,9 @@ class Car(Agent):
             self.state = "death"
             pass
         elif self.state == "death":
+            self.model.carInDestination += 1
             self.model.grid.remove_agent(self)
             self.model.schedule.remove(self)
-            self.model.num_agentslives -= 1
             
 
 class Traffic_Light(Agent):
