@@ -2,7 +2,8 @@
 simulacion de movimiento de un auto, con la generacion de las llantas
 usando matrices de transformacion
 */
-
+// Code made by Alan Hernández and Oswaldo Mendizábal with the help of Gil Echeverría
+// 30/11/2023
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

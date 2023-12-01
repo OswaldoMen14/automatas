@@ -1,6 +1,8 @@
 ﻿// TC2008B. Sistemas Multiagentes y Gráficas Computacionales
 // C# client to interact with Python. Based on the code provided by Sergio Ruiz.
 // Octavio Navarro. October 2023
+// Code made by Alan Hernández and Oswaldo Mendizábal with the help of Octavio Navarro and Gil Echeverría
+// 30/11/2023
 
 using System;
 using System.Collections;
@@ -40,7 +42,14 @@ public class AgentData
 [Serializable]
 public class TrafficLightData
 {
-
+    // The TrafficLightData class is used to store the data of each traffic light.
+    // Attributes:
+    //   id (string): The id of the traffic light.
+    //   x (float): The x coordinate of the traffic light.
+    //   y (float): The y coordinate of the traffic light.
+    //   z (float): The z coordinate of the traffic light.
+    //   light (bool): The state of the traffic light (true for green, false for red).
+    //   type (string): The type of the traffic light.
     public string id;
     public float x, y, z;
     public bool light;
@@ -86,32 +95,8 @@ public class TrafficLightsData
 
 public class AgentController : MonoBehaviour
 {
-    /*
-    The AgentController class is used to control the agents in the simulation.
+        // URL endpoints for communication with the server
 
-    Attributes:
-        serverUrl (string): The url of the server.
-        getAgentsEndpoint (string): The endpoint to get the agents data.
-        getObstaclesEndpoint (string): The endpoint to get the obstacles data.
-        sendConfigEndpoint (string): The endpoint to send the configuration.
-        updateEndpoint (string): The endpoint to update the simulation.
-        agentsData (AgentsData): The data of the agents.
-        obstacleData (AgentsData): The data of the obstacles.
-        agents (Dictionary<string, GameObject>): A dictionary of the agents.
-        prevPositions (Dictionary<string, Vector3>): A dictionary of the previous positions of the agents.
-        currPositions (Dictionary<string, Vector3>): A dictionary of the current positions of the agents.
-        updated (bool): A boolean to know if the simulation has been updated.
-        started (bool): A boolean to know if the simulation has started.
-        agentPrefab (GameObject): The prefab of the agents.
-        obstaclePrefab (GameObject): The prefab of the obstacles.
-        floor (GameObject): The floor of the simulation.
-        NAgents (int): The number of agents.
-        width (int): The width of the simulation.
-        height (int): The height of the simulation.
-        timeToUpdate (float): The time to update the simulation.
-        timer (float): The timer to update the simulation.
-        dt (float): The delta time.
-    */
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
     string getTrafficLightEndpoint = "/getTrafficLights";
@@ -136,6 +121,8 @@ public class AgentController : MonoBehaviour
 
     void Start()
     {
+        // Initialize data structures and start the communication with the server
+
         agentsData = new AgentsData();
         trafficLightsData = new TrafficLightsData();
 
@@ -146,17 +133,16 @@ public class AgentController : MonoBehaviour
 
 
 
-       // floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
-        // floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
         
         timer = timeToUpdate;
 
-        // Launches a couroutine to send the configuration to the server.
         StartCoroutine(SendConfiguration());
     }
 
     private void Update() 
     {
+     // Update timer and check if it's time to fetch new simulation data
+
         if(timer < 0)
         {
             timer = timeToUpdate;
@@ -169,15 +155,13 @@ public class AgentController : MonoBehaviour
             timer -= Time.deltaTime;
             dt = 1.0f - (timer / timeToUpdate);
 
-            // Iterates over the agents to update their positions.
-            // The positions are interpolated between the previous and current positions.
-          // float t = (timer / timeToUpdate);
-            // dt = t * t * ( 3f - 2f*t);
         }
     }
  
     IEnumerator UpdateSimulation()
     {
+        // Fetch updated simulation data from the server
+
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + updateEndpoint);
         yield return www.SendWebRequest();
 
@@ -187,6 +171,7 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else 
         {
+            // Update agent and traffic light data
             StartCoroutine(GetAgentsData());
             StartCoroutine(GetTrafficLight());
         }
@@ -194,20 +179,14 @@ public class AgentController : MonoBehaviour
 
     IEnumerator SendConfiguration()
     {
-        /*
-        The SendConfiguration method is used to send the configuration to the server.
-
-        It uses a WWWForm to send the data to the server, and then it uses a UnityWebRequest to send the form.
-        */
+        // Send initial configuration to the server
         WWWForm form = new WWWForm();
         form.AddField("timegenerate", timegenerate);
         form.AddField("file", file);
 
 
 
-        //form.AddField("NAgents", NAgents.ToString());
-        //form.AddField("width", width.ToString());
-        //form.AddField("height", height.ToString());
+        
 
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -223,7 +202,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Configuration upload complete!");
             Debug.Log("Getting Agents positions");
 
-            // Once the configuration has been sent, it launches a coroutine to get the agents data.
+            // Fetch initial agent and traffic light data
             StartCoroutine(GetAgentsData());
             StartCoroutine(GetTrafficLight());
         }
@@ -231,8 +210,7 @@ public class AgentController : MonoBehaviour
 
     IEnumerator GetAgentsData() 
     {
-        // The GetAgentsData method is used to get the agents data from the server.
-
+        // Fetch agent data from the server
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getAgentsEndpoint);
         yield return www.SendWebRequest();
  
@@ -240,8 +218,7 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else 
         {
-            // Once the data has been received, it is stored in the agentsData variable.
-            // Then, it iterates over the agentsData.positions list to update the agents positions.
+            // Parse and update agent positions
             agentsData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
 
             foreach(AgentData agent in agentsData.positions)
@@ -250,6 +227,7 @@ public class AgentController : MonoBehaviour
 
                     if(!agents.ContainsKey(agent.id))
                     {
+                        // Instantiate new agent if it doesn't exist
                         prevPositions[agent.id] = newAgentPosition;
                         agents[agent.id] = Instantiate(agentPrefab[UnityEngine.Random.Range(0,agentPrefab.Length)], new Vector3(0,0,0), Quaternion.identity);
                         Apply_Transform applyTransform = agents[agent.id].GetComponent<Apply_Transform>();
@@ -257,7 +235,7 @@ public class AgentController : MonoBehaviour
                         applyTransform.SetNewPos(newAgentPosition);
                         applyTransform.moveTime = timeToUpdate;
                     }
-                    //if the agent is in the intermediate state, it is destroyed
+                    // Handle destruction of agents in intermediate state
                     else if(agent.state == "intermediate"){
                         Debug.Log("wheels destroyed of the car " + agent.id);
                         Apply_Transform applyTransform = agents[agent.id].GetComponent<Apply_Transform>();
@@ -284,7 +262,7 @@ public class AgentController : MonoBehaviour
 
     IEnumerator GetTrafficLight()
     {
-       
+       // Fetch traffic light data from the server
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLightEndpoint);
         yield return www.SendWebRequest();
 
@@ -292,7 +270,7 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else
         {
-            
+            // Parse and update traffic light positions
             trafficLightsData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
 
             foreach (TrafficLightData trafficLight in trafficLightsData.positions)
@@ -301,7 +279,7 @@ public class AgentController : MonoBehaviour
                 Vector3 newTrafficLightPosition = new Vector3(trafficLight.x, trafficLight.y, trafficLight.z * tileSize);
 
                 if (!agents.ContainsKey(trafficLight.id))
-                {   
+                {   // Instantiate new traffic light if it doesn't exist
                     if(trafficLight.type == "s")
                     {
                         
@@ -328,7 +306,8 @@ public class AgentController : MonoBehaviour
                         agents[trafficLight.id] = Instantiate(trafficLightPrefab, newTrafficLightPosition, Quaternion.Euler(0, 180, 0));
                         Debug.Log("Semaphore " + trafficLight.id + " created"+ "with type" + trafficLight.type);
                     }
-
+                    
+                    //updates light component 
                     if (trafficLight.light)
                         agents[trafficLight.id].GetComponent<Light>().color = Color.green;
                     else
@@ -336,6 +315,7 @@ public class AgentController : MonoBehaviour
                 }
                 else
                 {
+                    // Update state of existing traffic lights
                     if(trafficLight.light)
                         
                         agents[trafficLight.id].GetComponent<Light>().color = Color.green;

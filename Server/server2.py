@@ -5,8 +5,25 @@ from mesa.visualization import ModularServer
 import json
 import requests
 
+"""
+
+Code made by Alan Hernández and Oswaldo Mendizábal
+30/11/2023
+
+"""
+
 def agent_portrayal(agent):
-    if agent is None: return
+    """
+    Define how agents are portrayed in the visualization.
+
+    Args:
+        agent: The agent to be portrayed.
+
+    Returns:
+        dict: A dictionary specifying the agent's portrayal properties.
+    """
+    if agent is None:
+        return
     
     portrayal = {"Shape": "rect",
                  "Filled": "true",
@@ -14,31 +31,30 @@ def agent_portrayal(agent):
                  "w": 1,
                  "h": 1
                  }
-    if (isinstance(agent, Car)):
+
+    if isinstance(agent, Car):
         portrayal["Color"] = "blue"
         portrayal["Layer"] = 1
-	
 
-    if (isinstance(agent, Road)):
+    if isinstance(agent, Road):
         portrayal["Color"] = "grey"
         portrayal["Layer"] = 0
-    
-    if (isinstance(agent, Destination)):
+
+    if isinstance(agent, Destination):
         portrayal["Color"] = "lightgreen"
         portrayal["Layer"] = 0
-    
-    if (isinstance(agent, Car)):
+
+    if isinstance(agent, Car):
         portrayal["Color"] = "blue"
         portrayal["Layer"] = 1
 
-
-    if (isinstance(agent, Traffic_Light)):
+    if isinstance(agent, Traffic_Light):
         portrayal["Color"] = "red" if not agent.state else "green"
         portrayal["Layer"] = 0
         portrayal["w"] = 0.8
         portrayal["h"] = 0.8
 
-    if (isinstance(agent, Obstacle)):
+    if isinstance(agent, Obstacle):
         portrayal["Color"] = "cadetblue"
         portrayal["Layer"] = 0
         portrayal["w"] = 0.8
@@ -46,6 +62,7 @@ def agent_portrayal(agent):
 
     return portrayal
 
+# Read the width and height of the grid from a map file
 width = 0
 height = 0
 
@@ -54,13 +71,17 @@ with open('static/city_files/2022_base.txt') as baseFile:
     width = len(lines[0])-1
     height = len(lines)
 
-model_params = {"N":2, "file":'static/city_files/2023_base.txt'}
+# Define model parameters
+model_params = {"N": 2, "file": 'static/city_files/2023_base.txt'}
 
-print(width, height)
+# Create a CanvasGrid for visualization
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)
 
+# Create a ModularServer for the CityModel
 server = ModularServer(CityModel, [grid], "Traffic Base", model_params)
-                       
-server.port = 8521 # The default
-server.launch()
 
+# Set the port for the server
+server.port = 8521  # The default
+
+# Launch the server
+server.launch()

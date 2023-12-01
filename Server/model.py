@@ -5,12 +5,18 @@ import random
 from agent import *
 import json
 
+"""
+
+Code made by Alan Hernández and Oswaldo Mendizábal
+30/11/2023
+
+"""
 class CityModel(Model):
     """ 
-        Creates a model based on a city map.
+    Creates a model based on a city map.
 
-        Args:
-            N: Number of agents in the simulation
+    Args:
+        N: Number of agents in the simulation
     """
     def __init__(self, N, file):
 
@@ -30,7 +36,8 @@ class CityModel(Model):
             self.width = len(lines[0])-1
             self.height = len(lines)
 
-            self.grid = MultiGrid(self.width, self.height, torus = False) 
+            # Create a MultiGrid and RandomActivation scheduler for the model
+            self.grid = MultiGrid(self.width, self.height, torus=False) 
             self.schedule = RandomActivation(self)
 
             # Goes through each character in the map file and creates the corresponding agent.
@@ -40,15 +47,15 @@ class CityModel(Model):
                         agent = Road(f"r_{r*self.width+c}", self, dataDictionary[col])
                         self.grid.place_agent(agent, (c, self.height - r - 1))
 
-                    elif col in ["S","s","X","x"]:
+                    elif col in ["S", "s", "X", "x"]:
                         if col == "S":
-                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]),"S")
+                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]), "S")
                         elif col == "X":
-                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]),"X")
+                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]), "X")
                         elif col == "x":
-                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]),"x")
+                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, False, int(dataDictionary[col]), "x")
                         else:
-                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, True, int(dataDictionary[col]),"s")
+                            agent = Traffic_Light(f"tl_{r*self.width+c}", self, True, int(dataDictionary[col]), "s")
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
                         self.traffic_lights.append(agent)
@@ -62,18 +69,24 @@ class CityModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.destination.append((c, self.height - r - 1))
 
-
         self.running = True
         self.step_count = 0
         self.car_generateblock = 0
-        
 
     def step(self):
         '''Advance the model by one step.'''
         self.schedule.step()
-        self.step_count +=1
-        position = [(0, self.height-1),(self.width - 1, self.height - 1),(0, 0),(self.width - 1, 0)]
-        if self.step_count == 1 or self.step_count % self.N == 0:
+        self.step_count += 1
+        position = [(0, self.height-1), (self.width - 1, self.height - 1), (0, 0), (self.width - 1, 0)]
+
+        #stops the simulation when step_count == 1000
+        if self.step_count == 1000:
+            self.running = False
+
+        #adds cars in the simulation any x steps
+        elif self.step_count == 1 or self.step_count % self.N == 0:
+
+            #generates cars in the 4 corners of the map
             for i in range(4):
                 destination = random.choice(self.destination)
                 if not any(isinstance(agent, Car) for agent in self.grid.get_cell_list_contents([position[i]])):
@@ -84,57 +97,10 @@ class CityModel(Model):
                     print("new car added to the grid")
                     print("this car is going to: ", destination)
                 else:
+
+                    #if blockage, stop the simulation 
                     self.car_generateblock += 1
             if self.car_generateblock == 4:
                 self.running = False
             else:
                 self.car_generateblock = 0
-    
-
-"""
-    def step(self):
-        '''Advance the model by one step.'''
-        self.schedule.step()
-        self.step_count += 1
-
-        if self.step_count == 1 or self.step_count % self.N == 0:
-            destination = random.choice(self.destination)
-            car1 = Car(f"car_{self.step_count}_1", self, (0, self.height-1), destination)
-            self.grid.place_agent(car1, (0, self.height - 1))
-            car1.initialize_path()  # Initialize the path after placing the car
-            self.schedule.add(car1)
-            self.num_agentslives += 1
-            
-            print("new car added to the grid")
-            print("this car is going to: ", destination)
-
-
-
-            destination = random.choice(self.destination)
-            car2 = Car(f"car_{self.step_count}_2", self,(self.width - 1, self.height - 1) , destination)
-            self.grid.place_agent(car2, (self.width - 1, self.height - 1))
-            car2.initialize_path()  # Initialize the path after placing the car
-            self.schedule.add(car2)
-            self.num_agentslives += 1
-            print("new car added to the grid")
-            print("this car is going to: ", destination)
-
-            
-            destination = random.choice(self.destination)
-            car3 = Car(f"car_{self.step_count}_3", self, (0, 0) ,destination)
-            self.grid.place_agent(car3, (0, 0))
-            car3.initialize_path()  # Initialize the path after placing the car
-            self.schedule.add(car3)
-            self.num_agentslives += 1
-            print("new car added to the grid")
-            print("this car is going to: ", destination)
-
-            destination = random.choice(self.destination)
-            car4 = Car(f"car_{self.step_count}_4", self,(self.width - 1, 0) , destination)
-            self.grid.place_agent(car4, (self.width - 1, 0))
-            car4.initialize_path()  # Initialize the path after placing the car
-            self.schedule.add(car4)
-            self.num_agentslives += 1
-            print("new car added to the grid")
-            print("this car is going to: ", destination)"""
-

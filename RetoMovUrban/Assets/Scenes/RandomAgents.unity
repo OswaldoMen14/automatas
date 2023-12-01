@@ -339,10 +339,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 983bc179e80f15347a79dd7b044746e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentPrefab: {fileID: 6019618798321258605, guid: 39c3ec00b3e450b47a244e0ce31aa852, type: 3}
+  agentPrefab:
+  - {fileID: 4177576280538021632, guid: efbd91e2ead89c944a021337e11cd172, type: 3}
+  - {fileID: 6019618798321258605, guid: 39c3ec00b3e450b47a244e0ce31aa852, type: 3}
   trafficLightPrefab: {fileID: 8609347376451747554, guid: 5adbef618d868004b989063d53dd0499, type: 3}
-  timeToUpdate: 1
+  timeToUpdate: 0.1
   tileSize: 1
+  timegenerate: 7
+  file: static/city_files/2023_base.txt
 --- !u!4 &1518653506
 Transform:
   m_ObjectHideFlags: 0
