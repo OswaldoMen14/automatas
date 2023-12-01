@@ -3,7 +3,12 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from agent import *
 import json
+"""
 
+Code made by Alan Hernández and Oswaldo Mendizábal
+30/11/2023
+
+"""
 class CityModel(Model):
     """ 
         Creates a model based on a city map.
